@@ -3,17 +3,19 @@ package maze;
 /**
  * Created by huguesl on 27/03/15.
  */
+
+
 public class Maze
 
 {
     public enum Direction { up,down,left,right};
 
-    class Wanderer {
+     class Wanderer {
         int x,y;
         Direction dir;
         Maze maze;
 
-        void Wanderer(int x, int y , Maze maze){
+         Wanderer(int x, int y , Maze maze){
             this.x = x;
             this.y = y;
             dir = Direction.up;
@@ -64,24 +66,63 @@ public class Maze
 
         }
 
+        void mark(){
+            maze.setCharAt(x,y,'*');
+        }
+
+        void wander(int steps){
+            while (steps-- >0) {
+                while (faceWall())
+                    turnRight();
+                forward();
+                mark();
+
+            }
+        }
+
 
     }
+
+
 
     String maze[] = {
             "######################################",
+            "#     #                              #",
             "#                                    #",
             "#                                    #",
             "#                                    #",
+            "#                                    #",
+            "#    ##                              #",
             "######################################",
 
     };
-    boolean isWall(int x , int y){
+    private char grid[][];
+    private int width,height;
 
-        return maze[y].charAt(x) == '#';
 
+    protected boolean isWall(int x , int y){
+        return grid[y][x] == '#';
     }
 
-    public void Maze(){
+    protected void setCharAt(int x ,int y , char c) {
+        //System.out.format("(%d %d )",x,y);
+        grid[y][x] = c;
+    }
+
+    private void clear(){
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++)
+                grid[y][x] = maze[y].charAt(x);
+
+        }
+    }
+    public Maze(){
+
+        width = maze[0].length();
+        height = maze.length;
+        grid = new char[height][width];
+
+        clear();
 
     }
 
@@ -89,8 +130,8 @@ public class Maze
 
 
     void print(){
-        for (String s : maze){
-            System.out.println(s);
+        for (int y = 0; y < height; y++){
+            System.out.println(grid[y]);
         }
     }
 
@@ -99,10 +140,12 @@ public class Maze
 
     public static void  main(String args[]){
 
-        System.out.println("main");
+        System.out.println("Main");
         Maze m = new Maze();
-        m.print();
 
+        Wanderer w = m.new Wanderer(2,3,m);
+        w.wander(10);
+        m.print();
         System.out.println("Done");
 
     }
